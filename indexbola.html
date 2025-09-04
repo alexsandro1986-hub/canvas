@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <style>
+        #can {
+            border: solid 3px rgb(4, 58, 4);
+        }
+    </style>
+</head>
+
+<body>
+    <canvas id="can" width="900" height="700"></canvas>
+  
+    <script>
+
+
+        const quadro = document.getElementById('can');
+        const ctx = quadro.getContext('2d');
+
+        let largura = quadro.width;
+        let altura = quadro.height;
+        let PisoAltura = 80;
+        let bola = {
+            x: 300,
+            y: -60,
+            raio: 30,
+            velvertical: 0,
+            gravidade: 0.2,
+            pulo: 0.7
+        };
+        let colisao = altura - PisoAltura - bola.raio;
+
+        function Atualizar() {
+            bola.velvertical += bola.gravidade
+            bola.y += bola.velvertical;
+            if (bola.y > colisao) {
+                bola.y = colisao;
+                bola.velvertical *= - bola.pulo
+            }
+        }
+
+        function Desenhar() {
+            ctx.clearRect(0, 0, largura, altura);
+            ctx.fillStyle = 'blue';
+            ctx.fillRect(0,0,largura,altura);//desenha ceu
+            ctx.fillStyle="green";
+            ctx.fillRect(0,altura-PisoAltura,largura,PisoAltura)//desenha piso
+
+            ctx.beginPath();
+            ctx.fillStyle="red"
+            ctx.arc(bola.x,bola.y,bola.raio,0,Math.PI*2)
+            ctx.fill();
+            ctx.closePath();
+        }
+        function Repetir() {
+            Atualizar();
+            Desenhar();
+            requestAnimationFrame(Repetir);
+
+        }
+        Repetir();
+    </script>
+
+
+
+
+</body>
+
+</html>

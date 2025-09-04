@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <script>
+        let base = Number(prompt('Digite o valor da base'));
+        let exp = Number(prompt('digite expoente'));
+        function potencia(base, exp) {
+            let res = 1;
+            let expoente = Math.abs(exp)
+           
+            for (let i = 0; i < expoente; i++) {
+                res = res * base
+            }
+            if (exp<0) {
+                res =1/res
+            }
+            return res;
+        }
+        let resultado = potencia(base, exp);
+        alert(`A base  ${base} elevado ao expoente ${exp} é igual a ${resultado}`)
+    </script>
+</body>
+
+</html>

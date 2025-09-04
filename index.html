@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Canva</title>
+    <style>
+        #can {
+            border: solid 2px green
+        }
+    </style>
+</head>
+
+
+<body>
+    <canvas id="can" width="900" height="500"></canvas>
+    <script>
+        let quadro = document.getElementById('can');
+        let ctx = quadro.getContext('2d');
+
+
+        let Largura = quadro.width;
+        let Altura = quadro.height;
+
+
+        let PisoAltura = 80;
+        let PisoY = Altura - PisoAltura;
+        let Personagem = {
+            x: 100,
+            y: 0,
+            w: 40,
+            h: 40,
+            VelVertical: 0,
+            Gravidade: 0.2
+        }
+
+        window.addEventListener('click',Repetir,false);
+
+        function Atualizar() {
+            Personagem.VelVertical += Personagem.Gravidade;
+            Personagem.y += Personagem.VelVertical;
+
+
+            if (Personagem.y + Personagem.h > PisoY) {
+                Personagem.y = PisoY - Personagem.h;
+                Personagem.VelVertical = 0
+            }
+        };
+        function Desenhar() {
+            ctx.clearRect(0, 0, Largura, Altura)
+            ctx.fillStyle = 'blue';
+            ctx.fillRect(0, 0, Largura, Altura);
+            ctx.fillStyle = "green";
+            ctx.fillRect(0, PisoY, Largura, PisoAltura);
+            ctx.fillStyle = "red";
+            ctx.fillRect(Personagem.x, Personagem.y, Personagem.w, Personagem.h)
+        };
+
+        function Repetir() {
+            Atualizar();
+            Desenhar();
+            requestAnimationFrame(Repetir);
+        }
+        //Repetir();
+    </script>
+</body>
+
+
+</html>
