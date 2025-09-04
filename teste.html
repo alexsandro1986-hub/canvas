@@ -5,33 +5,32 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <style>
+        #tabela {}
+    </style>
 </head>
+<div id="tabela"></div>
 
 <body>
     <script>
-       
-        let vertical = [
-            "x",
-            "x",
-            "x",
-            "x",
-        ]
-        let horizontal = [
-            "x",
-            "x",
-            "x",
-            "x",
-            "x",
-        ]
+        let saida = document.getElementById("tabela")
 
-        for (let i = 0; i < exp; i++) {
+        let n = Number(prompt("Digite o tamanho da tabela"))
+        function quadrado(n) {
+            let txt = ""
+            let contador = 1;
+            for (let i = 0; i < n; i++) {
+                let linha = ""
+                for (let j = 0; j < n; j++) {
+                    linha += "*"
 
-            for (let index = 0; index < horizontal; index++) {
-
+                }
+                txt += linha + "<br>"
 
             }
 
         }
+        saida.innerText=txt;
 
     </script>
 </body>
