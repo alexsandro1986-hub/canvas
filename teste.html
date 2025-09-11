@@ -4,34 +4,30 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <style>
-        #tabela {}
-    </style>
+    <title>Quadrado de Asteriscos</title>
 </head>
-<div id="tabela"></div>
 
 <body>
+    <div id="tabela"></div>
+
     <script>
-        let saida = document.getElementById("tabela")
+        let saida = document.getElementById("tabela");
 
-        let n = Number(prompt("Digite o tamanho da tabela"))
+        let n = Number(prompt("Digite o tamanho da tabela"));
+
         function quadrado(n) {
-            let txt = ""
-            let contador = 1;
+            let txt = "";
             for (let i = 0; i < n; i++) {
-                let linha = ""
                 for (let j = 0; j < n; j++) {
-                    linha += "*"
-
+                    txt += "*";
                 }
-                txt += linha + "<br>"
-
+                txt += "<br>";
             }
-
+            return txt; // retorna o texto gerado
         }
-        saida.innerText=txt;
 
+        // chama a função e mostra no HTML
+        saida.innerHTML = quadrado(n);
     </script>
 </body>
 
