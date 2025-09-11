@@ -83,6 +83,8 @@
             if (mvDown && !mvUp) {
                 principal.posY += principal.velocidade
             }
+            principal.posX = Math.max(0,Math.min(cnv.width - principal.width , principal.posX))
+             principal.posY = Math.max(0,Math.min(cnv.height - principal.height , principal.posY))
         }
         function Desenhar() {
             ctx.clearRect(0, 0, cnv.width, cnv.height);
