@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <div style="width: 600px; margin:0 auto; padding-top: 50px;">
+        <canvas width="600" height="400" style="border: solid 3px rgb(11, 104,11);"></canvas>
+
+    </div>
+    <script type="text/javascript" src="retangulo.js">
+        const cnv = document.querySelector("canvas")
+        const ctx = cnv.getContext('2d')
+
+        const LEFT = 37, UP = 38, RIGHT = 39, DOWN = 40;
+
+        let mvLeft = mvUp = mvRight = mvDown = false
+
+        let figuras = [];
+        let principal = new Retangulo(100, 250, 50, 50, "green")
+        principal.velocidade = 4;
+        figuras.push(principal);
+        let bloco1 = new Retangulo(200, 300, 100, 50, "blue");
+        figuras.push(bloco1);
+        let bloco2 = new Retangulo(500, 200, 50, 100, "red")
+        figuras.push(bloco2)
+        let bloco3 = new Retangulo(50, 100, 100, 50, "yellow")
+        figuras.push(bloco3);
+
+
+        window.addEventListener('Keydown', function (e) {
+            let key = e.keycode;
+            switch (key) {
+                case LEFT:
+                    mvLeft = true;
+                    break;
+                case UP:
+                    mvUp = true
+                    break;
+                case RIGHT:
+                    mvRight = true
+                    break;
+                case DOWN:
+                    mvDown = true
+                    break;
+
+            }
+        }, false)
+
+        window.addEventListener('keyup', function (e) {
+            let key = e.keycode;
+            switch (key) {
+                case LEFT:
+                    mvLeft = false;
+                    break;
+                case UP:
+                    mvUp = false
+                    break;
+                case RIGHT:
+                    mvRight = false
+                    break;
+                case DOWN:
+                    mvDown = false
+                    break;
+
+            }
+        })
+
+        function Atualizar() {
+            if (mvLeft && !mvRight) {
+                principal.posX -= principal.velocidade;
+            }
+            if(mvRight && !mvLeft){
+                principal.posX += principal.velocidade
+            }
+            if (mvUp && !mvDown) {
+                principal.posY-= principal.velocidade
+            }
+            if (mvDown && !mvUp) {
+                principal.posY += principal.velocidade
+            }
+        }
+        function Desenhar() {
+            ctx.clearRect(0, 0, cnv.width, cnv.height);
+            for (let i = 0; i < figuras.length; i++) {
+                let des = figuras[i]
+                ctx.fillStyle = des.color;
+                ctx.fillRect(des.posX, des.posY, des.width, des.height)
+            }
+
+        }
+        function Repetir() {
+            Atualizar()
+            Desenhar()
+            window.requestAnimationFrame(Repetir, cnv)
+        }
+    </script>
+</body>
+
+</html>
