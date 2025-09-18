@@ -4,103 +4,124 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Jogo Retângulo</title>
 </head>
 
 <body>
     <div style="width: 600px; margin:0 auto; padding-top: 50px;">
         <canvas width="600" height="400" style="border: solid 3px rgb(11, 104,11);"></canvas>
-
     </div>
-    <script type="text/javascript" src="retangulo.js">
-        const cnv = document.querySelector("canvas")
-        const ctx = cnv.getContext('2d')
+
+    <!-- Seus scripts -->
+    <script type="text/javascript" src="retangulo.js"></script>
+    <script type="text/javascript" src="colisao.js"></script>
+
+    <script>
+        const cnv = document.querySelector("canvas");
+        const ctx = cnv.getContext('2d');
 
         const LEFT = 37, UP = 38, RIGHT = 39, DOWN = 40;
-
-        let mvLeft = mvUp = mvRight = mvDown = false
+        let mvLEFT = false, mvUp = false, mvRight = false, mvDown = false;
 
         let figuras = [];
-        let principal = new Retangulo(100, 250, 50, 50, "green")
+        let blocos = [];
+
+        let principal = new Retangulo(100, 250, 50, 50, "green");
         principal.velocidade = 4;
         figuras.push(principal);
+
         let bloco1 = new Retangulo(200, 300, 100, 50, "blue");
         figuras.push(bloco1);
-        let bloco2 = new Retangulo(500, 200, 50, 100, "red")
-        figuras.push(bloco2)
-        let bloco3 = new Retangulo(50, 100, 100, 50, "yellow")
+        blocos.push(bloco1);
+
+        let bloco2 = new Retangulo(500, 200, 50, 100, "red");
+        figuras.push(bloco2);
+        blocos.push(bloco2);
+
+        let bloco3 = new Retangulo(50, 100, 100, 50, "yellow");
         figuras.push(bloco3);
+        blocos.push(bloco3);
 
-
-        window.addEventListener('Keydown', function (e) {
-            let key = e.keycode;
+        window.addEventListener('keydown', function (e) {
+            let key = e.keyCode;
             switch (key) {
                 case LEFT:
-                    mvLeft = true;
+                    mvLEFT = true;
                     break;
                 case UP:
-                    mvUp = true
+                    mvUp = true;
                     break;
                 case RIGHT:
-                    mvRight = true
+                    mvRight = true;
                     break;
                 case DOWN:
-                    mvDown = true
+                    mvDown = true;
                     break;
-
             }
-        }, false)
+        }, false);
 
         window.addEventListener('keyup', function (e) {
-            let key = e.keycode;
+            let key = e.keyCode;
             switch (key) {
                 case LEFT:
-                    mvLeft = false;
+                    mvLEFT = false;
                     break;
                 case UP:
-                    mvUp = false
+                    mvUp = false;
                     break;
                 case RIGHT:
-                    mvRight = false
+                    mvRight = false;
                     break;
                 case DOWN:
-                    mvDown = false
+                    mvDown = false;
                     break;
-
             }
-        })
+        }, false);
 
         function Atualizar() {
-            if (mvLeft && !mvRight) {
+            if (mvLEFT && !mvRight) {
                 principal.posX -= principal.velocidade;
             }
-            if(mvRight && !mvLeft){
-                principal.posX += principal.velocidade
+            if (mvRight && !mvLEFT) {
+                principal.posX += principal.velocidade;
             }
             if (mvUp && !mvDown) {
-                principal.posY-= principal.velocidade
+                principal.posY -= principal.velocidade;
             }
             if (mvDown && !mvUp) {
-                principal.posY += principal.velocidade
+                principal.posY += principal.velocidade;
             }
-            principal.posX = Math.max(0,Math.min(cnv.width - principal.width , principal.posX))
-             principal.posY = Math.max(0,Math.min(cnv.height - principal.height , principal.posY))
+
+            // Limites da tela
+            principal.posX = Math.max(0, Math.min(cnv.width - principal.width, principal.posX));
+            principal.posY = Math.max(0, Math.min(cnv.height - principal.height, principal.posY));
+
+            for (let i = 0; i < blocos.length; i++) {
+                let blk = blocos[i];
+                if (blk.visible) {
+                    blocoRect(principal, blk);
+                }
+            }
         }
+
         function Desenhar() {
             ctx.clearRect(0, 0, cnv.width, cnv.height);
             for (let i = 0; i < figuras.length; i++) {
-                let des = figuras[i]
-                ctx.fillStyle = des.color;
-                ctx.fillRect(des.posX, des.posY, des.width, des.height)
+                let des = figuras[i];
+                if (des.visible) {
+                    ctx.fillStyle = des.color;
+                    ctx.fillRect(des.posX, des.posY, des.width, des.height);
+                }
             }
+        }
 
-        }
         function Repetir() {
-            Atualizar()
-            Desenhar()
-            window.requestAnimationFrame(Repetir, cnv)
+            Atualizar();
+            Desenhar();
+            requestAnimationFrame(Repetir);
         }
+
+        Repetir();
     </script>
 </body>
-
 </html>
