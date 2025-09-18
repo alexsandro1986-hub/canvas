@@ -8,6 +8,9 @@ function blocoRect(r1,r2) {
 
     if (Math.abs(catX) < somaMetadeLargura && Math.abs(catY)< somaMetadeAltura){
         r2.visible = false;
-        
+        setTimeout(function () {
+            r2.visible= true;
+
+        },1000)
     }
 }
