@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Document</title>
+</head>
+
+<body>
+	<script type="text/javascript" src="retangulo.js"></script>
+	<script type="text/javascript" src="colissao.js"></script>
+
+	<div style="width: 640px; margin: 0 auto;padding-top: 15px;">
+		<canvas width="640" height="640" style="border: solid 3px rgb(7, 124, 7);"></canvas>
+	</div>
+
+	<script>
+		const cnv = document.querySelector('canvas');
+		const ctx = cnv.getContext('2d');
+
+		const LEFT = 37, UP = 38, RIGHT = 39, DOWN = 40;
+
+		let mvLeft = mvUp = mvRight = mvDown = false;
+		
+
+		let personagens = [];
+		let labirinto = [
+			[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+			[1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1],
+			[1, 1, 1, 0, 1, 1, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1],
+			[1, 0, 0, 0, 0, 0, 1, 0, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1],
+			[1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+			[1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+			[1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1],
+			[1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1],
+			[1, 0, 1, 1, 1, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+			[1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1],
+			[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+			[1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1],
+			[1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1],
+			[1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1],
+			[1, 0, 0, 1, 0, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1],
+			[1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1],
+			[1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+			[1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1],
+			[1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1],
+			[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+		];
+
+		let principal = new Retangulo(33, 33, 30, 30, "green");
+		principal.velocidade = 3;
+		personagens.push(principal);
+
+		window.addEventListener('keydown', function (e) {
+			let key = e.keyCode;
+			switch (key) {
+				case LEFT:
+					mvLeft = true;
+					break;
+				case UP:
+					mvUp = true;
+					break;
+				case RIGHT:
+					mvRight = true;
+					break;
+				case DOWN:
+					mvDown = true;
+					break;
+			}
+		}, false);
+
+		window.addEventListener('keyup', function (e) {
+			let key = e.keyCode;
+			switch (key) {
+				case LEFT:
+					mvLeft = false;
+					break;
+				case UP:
+					mvUp = false;
+					break;
+				case RIGHT:
+					mvRight = false;
+					break;
+				case DOWN:
+					mvDown = false;
+					break;
+			}
+		}, false);
+
+		function Atualizar() {
+			if (mvLeft && !mvRight) {
+				principal.posX -= principal.velocidade;
+			}
+			if (mvRight && !mvLeft) {
+				principal.posX += principal.velocidade;
+			}
+			if (mvUp && !mvDown) {
+				principal.posY -= principal.velocidade;
+			}
+			if (mvDown && !mvUp) {
+				principal.posY += principal.velocidade;
+			}
+
+			for (let i = 0; i < blocos.length; i++) {
+				let blk = blocos[i];
+				if (blk.visible) {
+					blocoRect(principal,blk );
+				}
+			}
+
+		}
+
+		function Desenhar() {
+			ctx.save()
+			ctx.clearRect(0, 0, cnv.width, cnv.height);
+			for (let i in labirinto) {
+				for (let j in labirinto[i]) {
+					let muro = labirinto[i][j];
+					if (muro === 1) {
+						let x = j * 32;
+						let y = i * 32;
+						ctx.fillRect(x, y, 32, 32);
+					}
+				}
+			}
+
+			ctx.fillStyle = principal.color;
+			ctx.fillRect(principal.posX, principal.posY, principal.width, principal.height);
+			ctx.restore();
+		}
+
+		function Repetir() {
+			Atualizar();
+			Desenhar();
+			requestAnimationFrame(Repetir, cnv);
+		}
+
+		Repetir();
+	</script>
+</body>
+
+</html>
