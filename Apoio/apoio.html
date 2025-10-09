@@ -15,10 +15,13 @@
     <script>
         const cnv = document.querySelector('canvas');
         const ctx = cnv.getContext('2d');
+        const WIDTH = cnv.width;
+        const HEIGHT = cnv.height;
 
         const LEFT = 37, UP = 38, RIGHT = 39, DOWN = 40;
 
         let mvLeft = mvUp = mvRight = mvDown = false;
+        let tamanho = 64;
 
         let principal = {
             x: 33,
@@ -27,7 +30,25 @@
             height: 30,
             velocidade: 2
         }
+        let camera = {
+            x: 0,
+            y: 0,
+            width: WIDTH,
+            height: HEIGHT,
+            limiteEsquerdo: function () {
+                return this.x + (this.width * 0.25);
+            },
+            limiteSuperior: function () {
+                return this.y + (this.height * 0.25);
+            },
+            limiteDireito: function () {
+                return this.x + (this.width * 0.75);
+            },
+            limiteInferior: function () {
+                return this.y + (this.height * 0.75);
+            }
 
+        }
         let paredes = [];
         let labirinto = [
             [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
@@ -57,10 +78,10 @@
                 let muro = labirinto[i][j]
                 if (muro === 1) {
                     let parede = {
-                        x: j * 32,
-                        y: i * 32,
-                        width: 32,
-                        height: 32
+                        x: j * tamanho,
+                        y: i * tamanho,
+                        width: tamanho,
+                        height: tamanho
                     }
                     paredes.push(parede);
                 }
@@ -141,19 +162,32 @@
                 let parede = paredes[i];
                 blocoRet(principal, parede);
             }
+            if (principal.x < camera.limiteEsquerdo()) {
+                camera.x = principal.x - (camera.width * 0.25)
+            }
+            if (principal.y < camera.limiteSuperior()) {
+                camera.y = principal.y - (camera.height * 0.25)
+            }
+            if (principal.x + principal.width > camera.limiteDireito()) {
+                camera.x = principal.x + principal.width - (camera.width * 0.75)
+            }
+            if (principal.y + principal.height > camera.limiteInferior()) {
+                camera.y = principal.y + principal.height - (camera.height * 0.75)
+            }
 
         }
 
         function Desenhar() {
             ctx.clearRect(0, 0, cnv.width, cnv.height)
             ctx.save();
+            ctx.translate(-camera.x, - camera.y);
             for (let i in labirinto) {
                 for (let j in labirinto[i]) {
                     let muro = labirinto[i][j];
                     if (muro === 1) {
-                        let x = j * 32;
-                        let y = i * 32;
-                        ctx.fillRect(x, y, 32, 32);
+                        let x = j * tamanho;
+                        let y = i * tamanho;
+                        ctx.fillRect(x, y, tamanho, tamanho);
                     }
                 }
             }
