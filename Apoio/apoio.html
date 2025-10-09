@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Labirinto</title>
+</head>
+
+<body>
+
+    <div style="width: 640px; margin: 0 auto;padding-top: 15px;">
+        <canvas width="640" height="640" style="border: solid 3px rgb(7, 124, 7);"></canvas>
+    </div>
+    <script>
+        const cnv = document.querySelector('canvas');
+        const ctx = cnv.getContext('2d');
+
+        const LEFT = 37, UP = 38, RIGHT = 39, DOWN = 40;
+
+        let mvLeft = mvUp = mvRight = mvDown = false;
+
+        let principal = {
+            x: 33,
+            y: 30,
+            width: 30,
+            height: 30,
+            velocidade: 2
+        }
+
+        let paredes = [];
+        let labirinto = [
+            [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1],
+            [1, 1, 1, 0, 1, 1, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1],
+            [1, 0, 0, 0, 0, 0, 1, 0, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1],
+            [1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+            [1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+            [1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1],
+            [1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1],
+            [1, 0, 1, 1, 1, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+            [1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1],
+            [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+            [1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1],
+            [1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1],
+            [1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1],
+            [1, 0, 0, 1, 0, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1],
+            [1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1],
+            [1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+            [1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1],
+            [1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1],
+            [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+        ];
+
+        for (let i in labirinto) {
+            for (let j in labirinto[i]) {
+                let muro = labirinto[i][j]
+                if (muro === 1) {
+                    let parede = {
+                        x: j * 32,
+                        y: i * 32,
+                        width: 32,
+                        height: 32
+                    }
+                    paredes.push(parede);
+                }
+            }
+        }
+
+
+        function blocoRet(r1, r2) {
+            let distX = (r1.x + r1.width / 2) - (r2.x + r2.width / 2)
+            let distY = (r1.y + r1.height / 2) - (r2.y + r2.height / 2)
+            let somaLargura = (r1.width + r2.width) / 2;
+            let somaAltura = (r1.height + r2.height) / 2;
+
+            if (Math.abs(distX) < somaLargura && Math.abs(distY) < somaAltura) {
+                let passarX = somaLargura - Math.abs(distX);
+                let passarY = somaAltura - Math.abs(distY);
+                if (passarX > passarY) {
+                    r1.y = distY > 0 ? r1.y + passarY : r1.y - passarY;
+                } else {
+                    {
+                        r1.x = distX > 0 ? r1.x + passarX : r1.x - passarX;
+                    }
+                }
+
+            }
+        }
+
+        window.addEventListener('keydown', function (e) {
+            let key = e.keyCode;
+            switch (key) {
+                case LEFT:
+                    mvLeft = true;
+                    break;
+                case UP:
+                    mvUp = true;
+                    break;
+                case RIGHT:
+                    mvRight = true;
+                    break;
+                case DOWN:
+                    mvDown = true;
+                    break;
+            }
+        }, false);
+
+        window.addEventListener('keyup', function (e) {
+            let key = e.keyCode;
+            switch (key) {
+                case LEFT:
+                    mvLeft = false;
+                    break;
+                case UP:
+                    mvUp = false;
+                    break;
+                case RIGHT:
+                    mvRight = false;
+                    break;
+                case DOWN:
+                    mvDown = false;
+                    break;
+            }
+        }, false);
+
+        function Atualizar() {
+            if (mvLeft && !mvRight) {
+                principal.x -= principal.velocidade;
+            }
+            if (mvRight && !mvLeft) {
+                principal.x += principal.velocidade;
+            }
+            if (mvUp && !mvDown) {
+                principal.y -= principal.velocidade;
+            }
+            if (mvDown && !mvUp) {
+                principal.y += principal.velocidade;
+            }
+            for (let i in paredes) {
+                let parede = paredes[i];
+                blocoRet(principal, parede);
+            }
+
+        }
+
+        function Desenhar() {
+            ctx.clearRect(0, 0, cnv.width, cnv.height)
+            ctx.save();
+            for (let i in labirinto) {
+                for (let j in labirinto[i]) {
+                    let muro = labirinto[i][j];
+                    if (muro === 1) {
+                        let x = j * 32;
+                        let y = i * 32;
+                        ctx.fillRect(x, y, 32, 32);
+                    }
+                }
+            }
+            ctx.fillStyle = "green";
+            ctx.fillRect(principal.x, principal.y, principal.width, principal.height);
+            ctx.restore();
+        }
+
+        function Repetir() {
+            Atualizar();
+            Desenhar();
+            requestAnimationFrame(Repetir, cnv);
+        }
+
+        Repetir();
+    </script>
+</body>
+
+</html>
